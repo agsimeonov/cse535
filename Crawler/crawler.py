@@ -148,3 +148,5 @@ except KeyboardInterrupt:
 except:
 #     file.close()
   traceback.print_exc()
+finally:
+  print '\n\nGoodbye!'
