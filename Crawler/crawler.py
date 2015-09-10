@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import datetime
 import json
 import os
@@ -42,7 +44,22 @@ else:
   print "You have successfully logged on as: " + api.me().screen_name
 
 # Initialize variables
-topic = ['politics', 'elections', 'government', 'politik', 'wahlen', 'regierung']
+topic =  ['politics', 
+          'elections', 
+          'government']
+topic += ['politik', 
+          'politologie', 
+          'staatskunst', 
+          'politische', 
+          'wahlen', 
+          'regierung', 
+          'regierungsform', 
+          'gouvernement']
+topic += [u'политика', 
+          u'политическая', 
+          u'политические', 
+          u'выборы', 
+          u'правительство']
 
 #Create output directory
 directory = sys.argv[5]
@@ -100,4 +117,4 @@ except KeyboardInterrupt:
 except:
   traceback.print_exc()
 finally:
-  print "Goodbye!"
+  print "\nGoodbye!"
