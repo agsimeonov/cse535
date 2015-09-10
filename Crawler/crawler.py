@@ -1,8 +1,10 @@
 import json
+import os
 import sys
 import traceback
 
 import tweepy
+
 
 # Make sure we have the correct command line arguments
 if len(sys.argv) != 6:
@@ -32,21 +34,20 @@ except tweepy.error.TweepError:
   print "Failed to authenticate, please provide correct credentials!"
   sys.exit(0)
 else:
-  print "You have successfully logged on as: " + api.me().screen_name + "\n"
+  print "You have successfully logged on as: " + api.me().screen_name
 
 # Initialize variables
 topic = ['politics', 'elections', 'political rallies', 'policy changes', 'government']
 topic += ['politik', 'wahlen', 'politische kundgebungen', 'regierung']
 
-# directory = './data/'
 # extension = '.txt'
-# count = 0
-# actualCount = 0
 # maxCount = 1000
 # flushCount = 100
 
-# Create data directories
-# if not os.path.exists(directory): os.makedirs(directory)
+#Create output directory
+directory = sys.argv[5]
+if not os.path.exists(directory): 
+  os.makedirs(directory)
 
 # Initialize files
 # file = open(directory + time.strftime('%Y%m%d-%H%M%S') + extension, 'w')
@@ -162,4 +163,4 @@ except:
 #     file.close()
   traceback.print_exc()
 finally:
-  print "\n\nGoodbye!"
+  print "\nGoodbye!"
