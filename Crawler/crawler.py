@@ -54,12 +54,15 @@ topic += ['politik',
           'wahlen', 
           'regierung', 
           'regierungsform', 
-          'gouvernement']
+          'gouvernement',
+          'refugeeswelcome',
+          u'flüchtlinge']
 topic += [u'политика', 
           u'политическая', 
           u'политические', 
           u'выборы', 
-          u'правительство']
+          u'правительство'
+          u'путин']
 
 #Create output directory
 directory = sys.argv[5]
