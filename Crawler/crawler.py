@@ -4,14 +4,19 @@ import traceback
 
 import tweepy
 
+# Make sure we have the correct command line arguments
+if len(sys.argv) != 6:
+  print "Please provide command line arguments as follows:"
+  print "python crawler.py <API Key> <API Secret> <Token> <Token Secret> <Output Dir>"
+  sys.exit(0)
 
 # Application settings
-apiKey = ''
-apiSecret = ''
+apiKey = sys.argv[1]
+apiSecret = sys.argv[2]
 
 # Your access token
-accesToken = ''
-accessTokenSecret = ''
+accesToken = sys.argv[3]
+accessTokenSecret = sys.argv[4]
 
 # Build an OAuthHandler
 auth = tweepy.OAuthHandler(apiKey, apiSecret)
@@ -19,6 +24,15 @@ auth.set_access_token(accesToken, accessTokenSecret)
 
 # Construct the API instance
 api = tweepy.API(auth)
+
+# Verify credentials
+try:
+  api.verify_credentials()
+except tweepy.error.TweepError:
+  print "Failed to authenticate, please provide correct credentials!"
+  sys.exit(0)
+else:
+  print "You have successfully logged on as: " + api.me().screen_name + "\n"
 
 # Initialize variables
 topic = ['politics', 'elections', 'political rallies', 'policy changes', 'government']
@@ -48,7 +62,6 @@ class StreamListener(tweepy.StreamListener):
     followersCount = ('%i' % (decoded['user']['followers_count']))
     tweet = ('%s' % (decoded['text'].encode('utf-8', 'ignore')))
     language = ('%s' % (decoded['lang'].encode('utf-8', 'ignore')))
-    print language
 #         mentions = ''
 #         hashtags = ''
 #         
@@ -143,10 +156,10 @@ stream = tweepy.Stream(auth, listener)
 try:
   stream.filter(track=topic, languages=['ru', 'en', 'de'])
 except KeyboardInterrupt:
-  print '\nGoodbye!'
+  pass
 #     file.close()
 except:
 #     file.close()
   traceback.print_exc()
 finally:
-  print '\n\nGoodbye!'
+  print "\n\nGoodbye!"
