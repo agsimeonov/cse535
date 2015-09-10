@@ -78,7 +78,7 @@ class StreamListener(tweepy.StreamListener):
 
     sys.stdout.write('\r\x1b[K' + 'English processed: ' + str(self.encount) + ' ' +
                                   'German processed: '  + str(self.decount) + ' ' +
-                                  'Russian processed: ' + str(self.rucount) + '\n')
+                                  'Russian processed: ' + str(self.rucount))
     sys.stdout.flush()
 
     return True
