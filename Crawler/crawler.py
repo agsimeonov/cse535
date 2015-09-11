@@ -10,7 +10,7 @@ import tweepy
 
 
 ENGLISH = 'en'
-GERMAN =  'de'
+GERMAN  = 'de'
 RUSSIAN = 'ru'
 
 # Make sure we have the correct command line arguments
@@ -43,7 +43,7 @@ except tweepy.error.TweepError:
 else:
   print "You have successfully logged on as: " + api.me().screen_name
 
-# Initialize variables
+# Initialize topic
 topic =  ['politics', 
           'elections', 
           'government']
@@ -69,26 +69,23 @@ directory = sys.argv[5]
 if not os.path.exists(directory): 
   os.makedirs(directory)
 
-# Initialize files
-# file = open(directory + time.strftime('%Y%m%d-%H%M%S') + extension, 'w')
-
 class StreamListener(tweepy.StreamListener):
   def __init__(self):
     self.decount = 0
     self.encount = 0
     self.rucount = 0
-    
+
   def on_data(self, data):
     decoded = json.loads(data)
     language = ('%s' % (decoded['lang'].encode('utf-8', 'ignore')))
     utc = datetime.datetime.utcnow().strftime('%Y%m%dT%H%M%S%fZ')
     path = os.path.join(directory, language + utc + '.json')
 
-  # Store the data
+    # Store the data
     with open(path, 'w') as out:
       out.write(data)
 
-  # Show current status
+    # Show current status
     if language == ENGLISH:
       self.encount += 1
     elif language == GERMAN:
@@ -96,9 +93,9 @@ class StreamListener(tweepy.StreamListener):
     else:
       self.rucount += 1
 
-    sys.stdout.write('\r\x1b[K' + 'English processed: ' + str(self.encount) + ' ' +
-                                  'German processed: '  + str(self.decount) + ' ' +
-                                  'Russian processed: ' + str(self.rucount))
+    sys.stdout.write('\r\x1b[K' + 'English tweets: ' + str(self.encount) + ' ' +
+                                  'German tweets: '  + str(self.decount) + ' ' +
+                                  'Russian tweets: ' + str(self.rucount))
     sys.stdout.flush()
 
     return True
@@ -106,7 +103,7 @@ class StreamListener(tweepy.StreamListener):
   def on_error(self, status_code):
     print >> sys.stderr, 'Twitter API Error Code: ' + status_code
     return True
-                   
+
   def on_timeout(self):
     return True
 
