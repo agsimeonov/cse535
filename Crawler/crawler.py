@@ -93,15 +93,15 @@ class StreamListener(tweepy.StreamListener):
     else:
       self.rucount += 1
 
-    sys.stdout.write('\r\x1b[K' + 'English tweets: ' + str(self.encount) + ' ' +
-                                  'German tweets: '  + str(self.decount) + ' ' +
-                                  'Russian tweets: ' + str(self.rucount))
+    sys.stdout.write('\r\x1b[K' + "English tweets: " + str(self.encount) + ' ' +
+                                  "German tweets: "  + str(self.decount) + ' ' +
+                                  "Russian tweets: " + str(self.rucount))
     sys.stdout.flush()
 
     return True
 
   def on_error(self, status_code):
-    print >> sys.stderr, 'Twitter API Error Code: ' + status_code
+    print >> sys.stderr, "Twitter API Error Code: " + status_code
     return True
 
   def on_timeout(self):
