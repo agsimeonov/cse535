@@ -38,7 +38,7 @@ for filename in os.listdir(directory):
     formattedTweet['twitter_urls'].append(urlsDict['expanded_url'])
   if 'media' in rawTweet['entities']:
     for mediaDict in rawTweet['entities']['media']:
-      formattedTweet['twitter_urls'].append(urlsDict['expanded_url'])
+      formattedTweet['twitter_urls'].append(mediaDict['media_url'])
   formattedTweet['twitter_urls'] = list(set(formattedTweet['twitter_urls']))
   
   # Add to formatted tweet to merge list
