@@ -7,8 +7,6 @@ ENGLISH = 'en'
 GERMAN  = 'de'
 RUSSIAN = 'ru'
 
-total = 0
-
 # Make sure we have the correct command line arguments
 if len(sys.argv) != 3:
   print "Please provide command line arguments as follows:"
@@ -35,6 +33,8 @@ for name in os.listdir(indir):
     days[day].append(name)
 
 # Split each day into language specific bins
+dayBins = {}
+
 for day in days:
   # Sort file names into bins
   bins = {ENGLISH: [], GERMAN: [], RUSSIAN: []}
@@ -47,23 +47,28 @@ for day in days:
     else:
       bins.get(RUSSIAN).append(name)
 
+  dayBins[day] = bins
+  
+# Find the minimum tweets per language per day
+minimum = sys.maxint
+
+for day in dayBins:
   # Get size of each bin
-  ensize = len(bins.get(ENGLISH))
-  desize = len(bins.get(GERMAN))
-  rusize = len(bins.get(RUSSIAN))
+  ensize = len(dayBins[day].get(ENGLISH))
+  desize = len(dayBins[day].get(GERMAN))
+  rusize = len(dayBins[day].get(RUSSIAN))
 
   # Get size of smallest bin
-  minimum = min([ensize, desize, rusize])
-  
-  total += minimum * 3
-  print str(day) + " - Daily total: " + str(minimum * 3) + "\tPer language: " + str(minimum)
-    
-  #Create an equilibrium of tweets for each language
-  for names in bins.values():
+  smallest = min([ensize, desize, rusize])
+  if smallest < minimum:
+    minimum = smallest
+
+# Create an equilibrium of tweets per language per day
+for day in dayBins:
+  #Create an equilibrium of tweets per language
+  for names in dayBins[day].values():
     # Make sure to get a random sample
     random.shuffle(names)
     for name in names[:minimum]:
       # Symlinks should be sufficient
       os.symlink(os.path.join(indir, name), os.path.join(outdir, name))
-
-print "Total: " + str(total)
