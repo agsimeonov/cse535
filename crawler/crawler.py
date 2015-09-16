@@ -64,8 +64,6 @@ topic += [u'политика',
           u'правительство',
           u'путин']
 
-print topic
-
 #Create output directory
 directory = sys.argv[5]
 if not os.path.exists(directory): 
