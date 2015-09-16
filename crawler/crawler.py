@@ -61,8 +61,10 @@ topic += [u'политика',
           u'политическая', 
           u'политические', 
           u'выборы', 
-          u'правительство'
+          u'правительство',
           u'путин']
+
+print topic
 
 #Create output directory
 directory = sys.argv[5]
