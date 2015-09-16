@@ -1,22 +1,24 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
 <schema name="twitter" version="1.5">
-   <field name="_version_" type="long" indexed="true" stored="true"/>
-   <field name="_root_" type="string" indexed="true" stored="false"/>
+ <field name="_version_" type="long" indexed="true" stored="true"/>
+ <field name="_root_" type="string" indexed="true" stored="false"/>
 
-   <field name="id" type="long" indexed="true" stored="true" required="true" multiValued="false" /> 
+ <field name="id" type="long" indexed="true" stored="true" required="true" multiValued="false"/> 
 
-   <field name="text" type="text_general" indexed="true" stored="true"/>
-   <field name="created_at" type="date" indexed="true" stored="true"/>
-   <field name="lang" type="string" indexed="true" stored="true"/>
-   <field name="twitter_urls" type="string" indexed="true" stored="true" multiValued="true"/>
-   <field name="twitter_hashtags" type="string" indexed="true" stored="true" multiValued="true"/>
+ <field name="text_de" type="text_general" indexed="true" stored="true"/>
+ <field name="text_en" type="text_general" indexed="true" stored="true"/>
+ <field name="text_ru" type="text_general" indexed="true" stored="true"/>
+ <field name="created_at" type="date" indexed="true" stored="true"/>
+ <field name="lang" type="string" indexed="true" stored="true"/>
+ <field name="twitter_urls" type="string" indexed="true" stored="true" multiValued="true"/>
+ <field name="twitter_hashtags" type="string" indexed="true" stored="true" multiValued="true"/>
 
-   <uniqueKey>id</uniqueKey>
+ <uniqueKey>id</uniqueKey>
 
-    <fieldType name="string" class="solr.StrField" sortMissingLast="true" />
-    <fieldType name="long" class="solr.TrieLongField" precisionStep="0" positionIncrementGap="0"/>
-    <fieldType name="date" class="solr.TrieDateField" precisionStep="0" positionIncrementGap="0"/>
+ <fieldType name="string" class="solr.StrField" sortMissingLast="true" />
+ <fieldType name="long" class="solr.TrieLongField" precisionStep="0" positionIncrementGap="0"/>
+ <fieldType name="date" class="solr.TrieDateField" precisionStep="0" positionIncrementGap="0"/>
 
     <!-- A general text field that has reasonable, generic
          cross-language defaults: it tokenizes with StandardTokenizer,
