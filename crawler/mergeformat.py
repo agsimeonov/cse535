@@ -19,19 +19,32 @@ merge = []
 # Format each raw tweet and put into merge list
 for filename in os.listdir(directory):
   formattedTweet = {}
-  
+
   # Get raw tweet
   with open(os.path.join(directory, filename), 'r') as rawFile:
     rawTweet = json.loads(rawFile.read())
-  
+
   # Create formatted tweet
   formattedTweet['id'] = rawTweet['id']
-  formattedTweet['text'] = rawTweet['text']
-  formattedTweet['lang'] = rawTweet['lang']
+
+  text = rawTweet['text']
+  lang = rawTweet['lang']
+
+  if lang == 'de':
+    formattedTweet['text_de'] = text
+  elif lang == 'en':
+    formattedTweet['text_en'] = text
+  else:
+    formattedTweet['text_ru'] = text
+
+  formattedTweet['lang'] = lang
+
   createdAt = time.strptime(rawTweet['created_at'], '%a %b %d %H:%M:%S +0000 %Y')
   formattedTweet['created_at'] = time.strftime('%Y-%m-%dT%H:%M:%SZ', createdAt)
+
   formattedTweet['twitter_hashtags'] = []
   formattedTweet['twitter_urls'] = []
+
   for hashtagsDict in rawTweet['entities']['hashtags']:
     formattedTweet['twitter_hashtags'].append(hashtagsDict['text'])
   for urlsDict in rawTweet['entities']['urls']:
@@ -39,8 +52,9 @@ for filename in os.listdir(directory):
   if 'media' in rawTweet['entities']:
     for mediaDict in rawTweet['entities']['media']:
       formattedTweet['twitter_urls'].append(mediaDict['media_url'])
+
   formattedTweet['twitter_urls'] = list(set(formattedTweet['twitter_urls']))
-  
+
   # Add to formatted tweet to merge list
   merge.append(formattedTweet)
 
