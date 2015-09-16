@@ -101,7 +101,7 @@ class StreamListener(tweepy.StreamListener):
     return True
 
   def on_error(self, status_code):
-    print >> sys.stderr, "Twitter API Error Code: " + status_code
+    print >> sys.stderr, "Twitter API Error Code: " + str(status_code)
     return True
 
   def on_timeout(self):
