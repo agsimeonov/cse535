@@ -22,21 +22,8 @@
 
   <!-- English -->
   <fieldType name="text_en" class="solr.TextField" positionIncrementGap="100">
-    <analyzer type="index">
-      <tokenizer class="solr.StandardTokenizerFactory"/>
-      <!-- In this example, we will only use synonyms at query time -->
-      <!-- <filter class="solr.SynonymFilterFactory" synonyms="index_synonyms.txt" ignoreCase="true" expand="false"/> -->
-      <!-- Case insensitive stop word removal. -->
-      <filter class="solr.StopFilterFactory" ignoreCase="true" words="lang/stopwords_en.txt"/>
-      <filter class="solr.LowerCaseFilterFactory"/>
-	  <filter class="solr.EnglishPossessiveFilterFactory"/>
-      <filter class="solr.KeywordMarkerFilterFactory" protected="protwords.txt"/>
-	  <!-- Optionally you may want to use this less aggressive stemmer instead of PorterStemFilterFactory: -->
-      <!-- <filter class="solr.EnglishMinimalStemFilterFactory"/>-->
-      <filter class="solr.PorterStemFilterFactory"/>
-    </analyzer>
-    <analyzer type="query">
-      <tokenizer class="solr.StandardTokenizerFactory"/>
+    <analyzer>
+      <tokenizer class="solr.UAX29URLEmailTokenizerFactory"/>
       <filter class="solr.SynonymFilterFactory" synonyms="synonyms.txt" ignoreCase="true" expand="true"/>
       <filter class="solr.StopFilterFactory" ignoreCase="true" words="lang/stopwords_en.txt"/>
       <filter class="solr.LowerCaseFilterFactory"/>
@@ -51,7 +38,7 @@
   <!-- German -->
   <fieldType name="text_de" class="solr.TextField" positionIncrementGap="100">
     <analyzer> 
-      <tokenizer class="solr.StandardTokenizerFactory"/>
+      <tokenizer class="solr.UAX29URLEmailTokenizerFactory"/>
       <filter class="solr.LowerCaseFilterFactory"/>
       <filter class="solr.StopFilterFactory" ignoreCase="true" words="lang/stopwords_de.txt" format="snowball" />
       <filter class="solr.GermanNormalizationFilterFactory"/>
@@ -64,7 +51,7 @@
   <!-- Russian -->
   <fieldType name="text_ru" class="solr.TextField" positionIncrementGap="100">
     <analyzer> 
-      <tokenizer class="solr.StandardTokenizerFactory"/>
+      <tokenizer class="solr.UAX29URLEmailTokenizerFactory"/>
       <filter class="solr.LowerCaseFilterFactory"/>
       <filter class="solr.StopFilterFactory" ignoreCase="true" words="lang/stopwords_ru.txt" format="snowball" />
       <filter class="solr.SnowballPorterFilterFactory" language="Russian"/>
