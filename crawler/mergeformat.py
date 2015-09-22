@@ -42,18 +42,18 @@ for filename in os.listdir(directory):
   createdAt = time.strptime(rawTweet['created_at'], '%a %b %d %H:%M:%S +0000 %Y')
   formattedTweet['created_at'] = time.strftime('%Y-%m-%dT%H:%M:%SZ', createdAt)
 
-  formattedTweet['twitter_hashtags'] = []
-  formattedTweet['twitter_urls'] = []
+  formattedTweet['tweet_hashtags'] = []
+  formattedTweet['tweet_urls'] = []
 
   for hashtagsDict in rawTweet['entities']['hashtags']:
-    formattedTweet['twitter_hashtags'].append(hashtagsDict['text'])
+    formattedTweet['tweet_hashtags'].append(hashtagsDict['text'])
   for urlsDict in rawTweet['entities']['urls']:
-    formattedTweet['twitter_urls'].append(urlsDict['expanded_url'])
+    formattedTweet['tweet_urls'].append(urlsDict['expanded_url'])
   if 'media' in rawTweet['entities']:
     for mediaDict in rawTweet['entities']['media']:
-      formattedTweet['twitter_urls'].append(mediaDict['media_url'])
+      formattedTweet['tweet_urls'].append(mediaDict['media_url'])
 
-  formattedTweet['twitter_urls'] = list(set(formattedTweet['twitter_urls']))
+  formattedTweet['tweet_urls'] = list(set(formattedTweet['tweet_urls']))
 
   # Add to formatted tweet to merge list
   merge.append(formattedTweet)

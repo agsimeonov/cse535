@@ -11,8 +11,8 @@
  <field name="text_ru" type="text_ru" indexed="true" stored="true"/>
  <field name="created_at" type="date" indexed="true" stored="true"/>
  <field name="lang" type="string" indexed="true" stored="true"/>
- <field name="twitter_urls" type="string" indexed="true" stored="true" multiValued="true"/>
- <field name="twitter_hashtags" type="string" indexed="true" stored="true" multiValued="true"/>
+ <field name="tweet_urls" type="string" indexed="true" stored="true" multiValued="true"/>
+ <field name="tweet_hashtags" type="string" indexed="true" stored="true" multiValued="true"/>
 
  <uniqueKey>id</uniqueKey>
 
