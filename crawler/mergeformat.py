@@ -27,7 +27,10 @@ for filename in os.listdir(directory):
   # Create formatted tweet
   formattedTweet['id'] = rawTweet['id']
 
-  text = rawTweet['text']
+  if 'retweeted_status' in rawTweet:
+    text = rawTweet['retweeted_status']['text']
+  else:
+    text = rawTweet['text']
   lang = rawTweet['lang']
 
   if lang == 'de':
