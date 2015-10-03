@@ -5,7 +5,7 @@ import java.util.Arrays;
  * 
  * @author Alexander Simeonov
  */
-public class Posting {
+public class Posting implements Comparable<Posting> {
   private final String term;
   private final Entry postingList[];
   
@@ -55,5 +55,12 @@ public class Posting {
   @Override
   public String toString() {
     return getTerm() + "\\c" + getSize() + "\\m" + Arrays.toString(getPostingList());
+  }
+
+  @Override
+  public int compareTo(Posting posting) {
+    if (this.getSize() < posting.getSize()) return 1;
+    else if (this.getSize() == posting.getSize()) return 0;
+    else return -1;
   }
 } 
