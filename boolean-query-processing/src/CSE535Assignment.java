@@ -22,7 +22,7 @@ public final class CSE535Assignment {
     System.out.println(Arrays.toString(args));
     
     for (Posting posting : new Index(args[0])) {
-      
+      System.out.println(posting);
     }
   }
   

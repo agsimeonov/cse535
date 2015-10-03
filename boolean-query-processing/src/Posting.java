@@ -1,5 +1,4 @@
-import java.util.ArrayList;
-
+import java.util.Arrays;
 
 /**
  * Represents a posting in the index. 
@@ -8,8 +7,7 @@ import java.util.ArrayList;
  */
 public class Posting {
   private final String term;
-  private final int size;
-  private final ArrayList<Entry> postingList = new ArrayList<Entry>();
+  private final Entry postingList[];
   
   /**
    * Creates a posting from a line in the index file.
@@ -19,10 +17,11 @@ public class Posting {
   public Posting(String line) {
     String[] split = line.split("\\\\[cm]");
     term = split[0];
-    size = Integer.parseInt(split[1]);
+    postingList = new Entry[Integer.parseInt(split[1])];
     String list = split[2].substring(1, split[2].length() - 1);
-    for (String entry : list.split(", "))
-      postingList.add(new Entry(entry));
+    String[] entries = list.split(", ");
+    for (int i = 0; i < getSize(); i++)
+      postingList[i] = new Entry(entries[i]);
   }
   
   /**
@@ -40,7 +39,7 @@ public class Posting {
    * @return size of the posting list
    */
   public int getSize() {
-    return size;
+    return postingList.length;
   }
   
   
@@ -49,12 +48,12 @@ public class Posting {
    * 
    * @return the posting list
    */
-  public ArrayList<Entry> getPostingList() {
+  public Entry[] getPostingList() {
     return postingList;
   }
   
   @Override
   public String toString() {
-    return term + "\\c" + size + "\\m" + postingList;
+    return getTerm() + "\\c" + getSize() + "\\m" + Arrays.toString(getPostingList());
   }
 } 
