@@ -27,7 +27,7 @@ public class Entry {
    * 
    * @return the number of occurrences for a term
    */
-  public int getCount() {
+  public int getTermFrequency() {
     return count;
   }
   

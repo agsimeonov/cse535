@@ -40,7 +40,7 @@ public final class CSE535Assignment {
    * @param K - number of largest postings list to get
    * @return the key dictionary terms that have the K largest postings lists
    */
-  private static String getTopK(int K) {
+  public static String getTopK(int K) {
     String out = "FUNCTION: getTopK " + K + "\n";
     
     if (K > postings.size()) K = postings.size();
