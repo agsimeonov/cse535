@@ -7,7 +7,6 @@ public class Entry {
   private final String docId;
   private final int count;
   
-  
   public Entry(String entry) {
     String[] split = entry.split("/");
     docId = split[0];
