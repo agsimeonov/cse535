@@ -22,5 +22,4 @@ public class Index implements Iterable<Posting> {
   public Iterator<Posting> iterator() {
     return new IndexIterator(indexFile);
   }
-
 }
