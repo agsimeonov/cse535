@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 
 
 /**
@@ -9,6 +10,8 @@ import java.util.Collections;
  */
 public final class CSE535Assignment {
   private static final ArrayList<Posting> postings = new ArrayList<Posting>();
+  private static final HashMap<String, Entry[]> dictionary = new HashMap<String, Entry[]>();
+  private static int K;
   
   /**
    * Processes the command line arguments.
@@ -24,9 +27,12 @@ public final class CSE535Assignment {
     
     for (Posting posting : new Index(args[0])) {
       postings.add(posting);
+      dictionary.put(posting.getTerm(), posting.getPostingList());
     }
     
     Collections.sort(postings);
+    
+    K = Integer.parseInt(args[2]);
   }
   
   /**
@@ -60,6 +66,6 @@ public final class CSE535Assignment {
 	 */
 	public static void main(String[] args) {
 	  setArguments(args);
-	  System.out.println(getTopK(20));
+	  System.out.println(getTopK(K));
 	}
 }
