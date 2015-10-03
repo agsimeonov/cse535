@@ -6,7 +6,7 @@ import java.util.Arrays;
  * 
  * @author Alexander Simeonov
  */
-public final class Driver {
+public final class CSE535Assignment {
   /**
    * Processes the command line arguments.
    * 
