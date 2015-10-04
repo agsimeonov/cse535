@@ -1,7 +1,7 @@
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-
 
 /**
  * The driver for the Boolean Query Processor based on Posting Lists.
@@ -10,6 +10,7 @@ import java.util.HashMap;
  */
 public final class CSE535Assignment {
   private static final ArrayList<Posting> postings = new ArrayList<Posting>();
+  private static final ArrayList<Query> queries = new ArrayList<Query>();
   private static final HashMap<String, Entry[]> dictionary = new HashMap<String, Entry[]>();
   private static int K;
   
@@ -35,7 +36,7 @@ public final class CSE535Assignment {
     K = Integer.parseInt(args[2]);
     
     for (Query query : new Queries(args[3])) {
-      System.out.println(query);
+      queries.add(query);
     }
   }
   
@@ -43,9 +44,10 @@ public final class CSE535Assignment {
    * This returns the key dictionary terms that have the K largest postings lists. The result is 
    * expected to be an ordered string in the descending order of result postings, i.e., largest in 
    * the first position, and so on. The output should be formatted as follows (K=10 for an example)
-   * 
+   * <blockquote><pre>
    * FUNCTION: getTopK 10
    * Result: term1, term2, term3..., term10 (list the terms)
+   * </pre></blockquote>
    * 
    * @param K - number of largest postings list to get
    * @return the key dictionary terms that have the K largest postings lists
@@ -60,7 +62,41 @@ public final class CSE535Assignment {
       if (i + 1 < K) out += ", ";
     }
     
-    return out + "\n";
+    return out;
+  }
+  
+  /**
+   * Retrieve the postings list for the given query. Since we have N input query terms, this 
+   * function should be executed N times, and output the postings for each term from both two 
+   * different ordered postings list. The corresponding posting list should be displayed in the 
+   * following format:
+   * <blockquote><pre>
+   * FUNCTION: getPostings query_term
+   * Ordered by doc IDs: 100, 200, 300... (list the document IDs ordered by increasing document IDs)
+   * Ordered by TF: 300, 100, 200... (list the document IDs ordered by decreasing term frequencies)
+   * </pre></blockquote>
+   * Should display “term not found” if it is not in the index.
+   * 
+   * @param query_term - given query
+   * @return documents IDs by document ID order and by term frequency order
+   */
+  public static String getPostings(String query_term) {
+    String out = "FUNCTION: getPostings " + query_term + "\n";
+    Entry[] entries = dictionary.get(query_term);
+    if (entries != null) {
+      out += "Ordered by doc IDs: ";
+      Arrays.sort(entries, new DocIdComparator());
+      String arrayString = Arrays.toString(entries);
+      out += arrayString.substring(1, arrayString.length() - 1) + "\n";
+      out += "Ordered by TF: ";
+      Arrays.sort(entries, new TermFrequencyComparator());
+      arrayString = Arrays.toString(entries);
+      out += arrayString.substring(1, arrayString.length() - 1);   
+    } else {
+      out += "term not found";
+    }
+    
+    return out;
   }
   
 	/**
@@ -71,5 +107,10 @@ public final class CSE535Assignment {
 	public static void main(String[] args) {
 	  setArguments(args);
 	  System.out.println(getTopK(K));
+	  for (Query query : queries) {
+	    for (String term : query.getTerms()) {
+	      System.out.println(getPostings(term));
+	    }
+	  }
 	}
 }

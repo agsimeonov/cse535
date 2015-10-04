@@ -33,6 +33,6 @@ public class Entry {
   
   @Override
   public String toString() {
-    return docId + "/" + count;
+    return docId;
   }
 }
