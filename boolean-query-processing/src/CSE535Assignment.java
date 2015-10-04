@@ -89,12 +89,10 @@ public final class CSE535Assignment {
     if (entries != null) {
       out += "Ordered by doc IDs: ";
       Arrays.sort(entries, new DocIdComparator());
-      String arrayString = Arrays.toString(entries);
-      out += arrayString.substring(1, arrayString.length() - 1) + "\n";
+      out += Arrays.toString(entries).replaceAll("\\[|\\]", "") + "\n";
       out += "Ordered by TF: ";
       Arrays.sort(entries, new TermFrequencyComparator());
-      arrayString = Arrays.toString(entries);
-      out += arrayString.substring(1, arrayString.length() - 1);   
+      out += Arrays.toString(entries).replaceAll("\\[|\\]", "");   
     } else {
       out += "term not found";
     }
