@@ -33,6 +33,10 @@ public final class CSE535Assignment {
     Collections.sort(postings);
     
     K = Integer.parseInt(args[2]);
+    
+    for (Query query : new Queries(args[3])) {
+      System.out.println(query);
+    }
   }
   
   /**

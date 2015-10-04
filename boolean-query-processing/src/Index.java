@@ -1,16 +1,15 @@
 import java.util.Iterator;
 
-
 /**
- * Represents the index for the postings given in an index file.
+ * Provides an iterable over the postings given in an index file.
  * 
  * @author Alexander Simeonov
  */
 public class Index implements Iterable<Posting> {
   private final String indexFile;
-  
+
   /**
-   * Represents the index for the postings given in an index file.
+   * Provides an iterable over the postings given in an index file.
    * 
    * @param indexFile - path to the index file
    */
