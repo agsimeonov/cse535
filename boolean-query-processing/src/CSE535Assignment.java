@@ -12,6 +12,7 @@ public final class CSE535Assignment {
   private static final ArrayList<Posting> postings = new ArrayList<Posting>();
   private static final ArrayList<Query> queries = new ArrayList<Query>();
   private static final HashMap<String, Entry[]> dictionary = new HashMap<String, Entry[]>();
+  private static Log log;
   private static int K;
   
   /**
@@ -32,6 +33,8 @@ public final class CSE535Assignment {
     }
     
     Collections.sort(postings);
+    
+    log = new Log(args[1]);
     
     K = Integer.parseInt(args[2]);
     
@@ -106,10 +109,10 @@ public final class CSE535Assignment {
 	 */
 	public static void main(String[] args) {
 	  setArguments(args);
-	  System.out.println(getTopK(K));
+	  log.log(getTopK(K));
 	  for (Query query : queries) {
 	    for (String term : query.getTerms()) {
-	      System.out.println(getPostings(term));
+	      log.log(getPostings(term));
 	    }
 	  }
 	}
