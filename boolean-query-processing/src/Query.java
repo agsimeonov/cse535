@@ -1,4 +1,5 @@
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Represents a single query.
@@ -6,7 +7,7 @@ import java.util.Arrays;
  * @author Alexander Simeonov
  */
 public class Query {
-  private final String[] terms;
+  private final List<String> terms;
   
   /**
    * Initializes the query from a single query line of terms.
@@ -14,7 +15,10 @@ public class Query {
    * @param line - a line of terms
    */
   public Query(String line) {
-    terms = line.split(" ");
+    String[] split = line.split(" ");
+    terms = new ArrayList<String>(split.length);
+    for (String term : split)
+      terms.add(term);
   }
   
   /**
@@ -22,12 +26,12 @@ public class Query {
    * 
    * @return the query terms
    */
-  public String[] getTerms() {
+  public List<String> getTerms() {
     return terms;
   }
   
   @Override
   public String toString() {
-    return Arrays.toString(terms);
+    return terms.toString();
   }
 }

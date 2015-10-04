@@ -6,7 +6,13 @@
 public class Entry {
   private final String docId;
   private final int count;
+  private static boolean showCount = false;
   
+  /**
+   * Initializes the entry, toString() will display only docIDs.
+   * 
+   * @param entry
+   */
   public Entry(String entry) {
     String[] split = entry.split("/");
     docId = split[0];
@@ -31,8 +37,17 @@ public class Entry {
     return count;
   }
   
+  /**
+   * Determines whether the toString() representations displays the term frequency.
+   * 
+   * @param showCount - true to display the term frequency otherwise false
+   */
+  public static void showCount(boolean showCount) {
+    Entry.showCount = true;
+  }
+  
   @Override
   public String toString() {
-    return docId;
+    return showCount ? docId + "/" + count : docId;
   }
 }

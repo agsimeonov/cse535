@@ -1,7 +1,7 @@
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * The driver for the Boolean Query Processor based on Posting Lists.
@@ -9,9 +9,9 @@ import java.util.HashMap;
  * @author Alexander Simeonov
  */
 public final class CSE535Assignment {
-  private static final ArrayList<Posting> postings = new ArrayList<Posting>();
-  private static final ArrayList<Query> queries = new ArrayList<Query>();
-  private static final HashMap<String, Entry[]> dictionary = new HashMap<String, Entry[]>();
+  private static final List<Posting> postings = new ArrayList<Posting>();
+  private static final List<Query> queries = new ArrayList<Query>();
+  private static final HashMap<String, List<Entry>> dictionary = new HashMap<String, List<Entry>>();
   private static Log log;
   private static int K;
   
@@ -85,20 +85,27 @@ public final class CSE535Assignment {
    */
   public static String getPostings(String query_term) {
     String out = "FUNCTION: getPostings " + query_term + "\n";
-    Entry[] entries = dictionary.get(query_term);
+    List<Entry> entries = dictionary.get(query_term);
     if (entries != null) {
       out += "Ordered by doc IDs: ";
-      Arrays.sort(entries, new DocIdComparator());
-      out += Arrays.toString(entries).replaceAll("\\[|\\]", "") + "\n";
+      entries.sort(new DocIdComparator());
+      out += entries.toString().replaceAll("\\[|\\]", "") + "\n";
       out += "Ordered by TF: ";
-      Arrays.sort(entries, new TermFrequencyComparator());
-      out += Arrays.toString(entries).replaceAll("\\[|\\]", "");   
+      entries.sort(new TermFrequencyComparator());
+      out += entries.toString().replaceAll("\\[|\\]", "");   
     } else {
       out += "term not found";
     }
     
     return out;
   }
+  
+//  public static String termAtATimeQueryAnd(Query query) {
+//    for (String term : query.getTerms()) {
+//      
+//    }
+//    return null;
+//  }
   
 	/**
 	 * Main entry point.
