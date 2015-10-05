@@ -124,7 +124,7 @@ public final class CSE535Assignment {
         for (Entry entry : entries) {
           for (Entry result : results) {
             comparisons += 1;
-            if (entry.getDocId().equals(result.getDocId())) {
+            if (ID_COMP.compare(entry, result) == 0) {
               intermediate.add(entry);
               break;
             }
