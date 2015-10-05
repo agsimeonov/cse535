@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
@@ -9,6 +10,10 @@ import java.util.List;
  * @author Alexander Simeonov
  */
 public final class CSE535Assignment {
+  private static final String NOT_FOUND = "terms not found";
+  private static final Comparator<Entry> ID_COMP = new DocIdComparator();
+  private static final Comparator<Entry> TF_COMP = new TermFrequencyComparator();
+  
   private static final List<Posting> postings = new ArrayList<Posting>();
   private static final List<Query> queries = new ArrayList<Query>();
   private static final HashMap<String, List<Entry>> dictionary = new HashMap<String, List<Entry>>();
@@ -88,24 +93,53 @@ public final class CSE535Assignment {
     List<Entry> entries = dictionary.get(query_term);
     if (entries != null) {
       out += "Ordered by doc IDs: ";
-      entries.sort(new DocIdComparator());
+      entries.sort(ID_COMP);
       out += entries.toString().replaceAll("\\[|\\]", "") + "\n";
       out += "Ordered by TF: ";
-      entries.sort(new TermFrequencyComparator());
+      entries.sort(TF_COMP);
       out += entries.toString().replaceAll("\\[|\\]", "");   
     } else {
-      out += "term not found";
+      out += NOT_FOUND;
     }
     
     return out;
   }
   
-//  public static String termAtATimeQueryAnd(Query query) {
-//    for (String term : query.getTerms()) {
-//      
-//    }
-//    return null;
-//  }
+  public static String termAtATimeQueryAnd(Query query) {
+    long startTime = System.nanoTime();
+    List<String> terms = query.getTerms();
+    String out = "FUNCTION: termAtATimeQueryAnd ";
+    out += terms.toString().replaceAll("\\[|\\]", "") + "\n";
+    List<Entry> results = new ArrayList<Entry>();
+    int comparisons = 0;
+    
+    for (String term : terms) {
+      List<Entry> entries = dictionary.get(term);
+      if (entries == null) return NOT_FOUND;
+      entries.sort(TF_COMP);
+      if (results.isEmpty()) {
+        for (Entry entry : entries) results.add(entry);
+      } else {
+        List<Entry> intermediate = new ArrayList<Entry>();
+        for (Entry entry : entries) {
+          for (Entry result : results) {
+            if (entry.getDocId().equals(result.getDocId())) intermediate.add(entry);
+            comparisons += 1;
+          }
+        }
+        results = intermediate;
+      }
+    }
+    
+    results.sort(ID_COMP); 
+    
+    out += results.size() + " documents are found\n";
+    out += comparisons + " comparisons are made\n";
+    out += ((double)(System.nanoTime() - startTime)) / 1000000000.0 + " seconds are used\n";
+    out += "Result: " + results.toString().replaceAll("\\[|\\]", "");
+    
+    return out;
+  }
   
 	/**
 	 * Main entry point.
@@ -119,6 +153,7 @@ public final class CSE535Assignment {
 	    for (String term : query.getTerms()) {
 	      log.log(getPostings(term));
 	    }
+	    log.log(termAtATimeQueryAnd(query));
 	  }
 	}
 }
