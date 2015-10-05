@@ -123,8 +123,11 @@ public final class CSE535Assignment {
         List<Entry> intermediate = new ArrayList<Entry>();
         for (Entry entry : entries) {
           for (Entry result : results) {
-            if (entry.getDocId().equals(result.getDocId())) intermediate.add(entry);
             comparisons += 1;
+            if (entry.getDocId().equals(result.getDocId())) {
+              intermediate.add(entry);
+              break;
+            }
           }
         }
         results = intermediate;
