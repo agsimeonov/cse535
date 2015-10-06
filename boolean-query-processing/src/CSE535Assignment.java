@@ -3,6 +3,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * The driver for the Boolean Query Processor based on Posting Lists.
@@ -16,7 +17,7 @@ public final class CSE535Assignment {
   
   private static final List<Posting> postings = new ArrayList<Posting>();
   private static final List<Query> queries = new ArrayList<Query>();
-  private static final HashMap<String, List<Entry>> dictionary = new HashMap<String, List<Entry>>();
+  private static final Map<String, List<Entry>> dictionary = new HashMap<String, List<Entry>>();
   private static Log log;
   private static int K;
   
@@ -108,6 +109,7 @@ public final class CSE535Assignment {
   public static String termAtATimeQueryAnd(Query query) {
     long startTime = System.nanoTime();
     List<String> terms = query.getTerms();
+    terms.sort(new QueryTermComparator(dictionary)); // bonus
     String out = "FUNCTION: termAtATimeQueryAnd ";
     out += terms.toString().replaceAll("\\[|\\]", "") + "\n";
     List<Entry> results = new ArrayList<Entry>();
