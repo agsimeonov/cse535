@@ -90,14 +90,14 @@ public final class CSE535Assignment {
    */
   public static String getPostings(String query_term) {
     String out = "FUNCTION: getPostings " + query_term + "\n";
-    List<Entry> entries = dictionary.get(query_term);
-    if (entries != null) {
+    List<Entry> postingList = dictionary.get(query_term);
+    if (postingList != null) {
       out += "Ordered by doc IDs: ";
-      entries.sort(ID_COMP);
-      out += entries.toString().replaceAll("\\[|\\]", "") + "\n";
+      postingList.sort(ID_COMP);
+      out += postingList.toString().replaceAll("\\[|\\]", "") + "\n";
       out += "Ordered by TF: ";
-      entries.sort(TF_COMP);
-      out += entries.toString().replaceAll("\\[|\\]", "");   
+      postingList.sort(TF_COMP);
+      out += postingList.toString().replaceAll("\\[|\\]", "");   
     } else {
       out += "term not found";
     }
@@ -116,14 +116,14 @@ public final class CSE535Assignment {
     int comparisons = 0;
     
     for (String term : terms) {
-      List<Entry> entries = dictionary.get(term);
-      if (entries == null) return null;
-      entries.sort(TF_COMP);
+      List<Entry> postingList = dictionary.get(term);
+      if (postingList == null) return null; //TODO Modify to return null results show comparisons and everything
+      postingList.sort(TF_COMP);
       if (results.isEmpty()) {
-        for (Entry entry : entries) results.add(entry);
+        for (Entry entry : postingList) results.add(entry);
       } else {
         List<Entry> intermediate = new ArrayList<Entry>();
-        for (Entry entry : entries) {
+        for (Entry entry : postingList) {
           for (Entry result : results) {
             comparisons += 1;
             if (ID_COMP.compare(entry, result) == 0) {
@@ -163,6 +163,23 @@ public final class CSE535Assignment {
   }
   
   public static String docAtATimeQueryAnd(Query query) {
+    List<String> terms = query.getTerms();
+    List<List<Entry>> postingLists = new ArrayList<List<Entry>>(terms.size());
+    
+    for (String term : terms) {
+      List<Entry> postingList = dictionary.get(term);
+      if (postingList == null) return "terms not found";
+      postingList.sort(ID_COMP);
+      postingLists.add(postingList);
+    }
+    
+    List<Integer> indexes = new ArrayList<Integer>(postingLists.size());
+    int index = 0;
+    
+    while (true) {
+      
+    }
+    
     return null;
   }
   
