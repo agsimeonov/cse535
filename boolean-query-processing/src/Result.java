@@ -37,4 +37,9 @@ public class Result {
   public int getComparisons() {
     return comparisons;
   }
+  
+  @Override
+  public String toString() {
+    return getResults().toString().replaceAll("\\[|\\]", "");
+  }
 }

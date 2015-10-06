@@ -157,7 +157,7 @@ public final class CSE535Assignment {
     out += result.getComparisons() + " comparisons are made\n";
     out += ((double)(System.nanoTime() - startTime)) / 1000000000.0 + " seconds are used\n";
     out += optResult.getComparisons() + " are made with optimization (optional bonus part)\n";
-    out += "Result: " + result.getResults().toString().replaceAll("\\[|\\]", "");
+    out += "Result: " + result;
     
     return out;
   }
