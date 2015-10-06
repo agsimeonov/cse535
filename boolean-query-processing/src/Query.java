@@ -22,12 +22,14 @@ public class Query {
   }
   
   /**
-   * Acquires the query terms.
+   * Acquires a copy of the query terms.
    * 
    * @return the query terms
    */
   public List<String> getTerms() {
-    return terms;
+    List<String> out = new ArrayList<String>(terms.size());
+    for (String term : terms) out.add(term);
+    return out;
   }
   
   @Override

@@ -11,7 +11,6 @@ import java.util.Map;
  * @author Alexander Simeonov
  */
 public final class CSE535Assignment {
-  private static final String NOT_FOUND = "terms not found";
   private static final Comparator<Entry> ID_COMP = new DocIdComparator();
   private static final Comparator<Entry> TF_COMP = new TermFrequencyComparator();
   
@@ -100,24 +99,25 @@ public final class CSE535Assignment {
       entries.sort(TF_COMP);
       out += entries.toString().replaceAll("\\[|\\]", "");   
     } else {
-      out += NOT_FOUND;
+      out += "term not found";
     }
     
     return out;
   }
   
-  public static String termAtATimeQueryAnd(Query query) {
-    long startTime = System.nanoTime();
-    List<String> terms = query.getTerms();
-    terms.sort(new QueryTermComparator(dictionary)); // bonus
-    String out = "FUNCTION: termAtATimeQueryAnd ";
-    out += terms.toString().replaceAll("\\[|\\]", "") + "\n";
+  /**
+   * Performs term-at-a-time query and, used as helper do be done for optimized terms as well.
+   * 
+   * @param terms - the query terms
+   * @return a pair of results and number of comparisons, null if a term could not be found
+   */
+  private static Result termAtATimeQueryAnd(List<String> terms) {
     List<Entry> results = new ArrayList<Entry>();
     int comparisons = 0;
     
     for (String term : terms) {
       List<Entry> entries = dictionary.get(term);
-      if (entries == null) return NOT_FOUND;
+      if (entries == null) return null;
       entries.sort(TF_COMP);
       if (results.isEmpty()) {
         for (Entry entry : entries) results.add(entry);
@@ -136,14 +136,34 @@ public final class CSE535Assignment {
       }
     }
     
-    results.sort(ID_COMP); 
+    return new Result(results, comparisons);
+  }
+  
+  public static String termAtATimeQueryAnd(Query query) {
+    long startTime = System.nanoTime();
+    List<String> terms = query.getTerms();
+    String out = "FUNCTION: termAtATimeQueryAnd ";
+    out += terms.toString().replaceAll("\\[|\\]", "") + "\n";
     
-    out += results.size() + " documents are found\n";
-    out += comparisons + " comparisons are made\n";
+    Result result = termAtATimeQueryAnd(terms);
+    if (result == null) return "terms not found";
+    
+    terms.sort(new QueryTermComparator(dictionary));
+    Result optResult = termAtATimeQueryAnd(terms);
+    
+    result.getResults().sort(ID_COMP);
+    
+    out += result.getResults().size() + " documents are found\n";
+    out += result.getComparisons() + " comparisons are made\n";
     out += ((double)(System.nanoTime() - startTime)) / 1000000000.0 + " seconds are used\n";
-    out += "Result: " + results.toString().replaceAll("\\[|\\]", "");
+    out += optResult.getComparisons() + " are made with optimization (optional bonus part)\n";
+    out += "Result: " + result.getResults().toString().replaceAll("\\[|\\]", "");
     
     return out;
+  }
+  
+  public static String docAtATimeQueryAnd(Query query) {
+    return null;
   }
   
 	/**
