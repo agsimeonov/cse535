@@ -2,6 +2,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -117,10 +118,11 @@ public final class CSE535Assignment {
     
     for (String term : terms) {
       List<Entry> postingList = dictionary.get(term);
-      if (postingList == null) return null; //TODO Modify to return null results show comparisons and everything
+      if (postingList == null) return null;
       postingList.sort(TF_COMP);
       if (results.isEmpty()) {
         for (Entry entry : postingList) results.add(entry);
+        if (results.isEmpty()) break;
       } else {
         List<Entry> intermediate = new ArrayList<Entry>();
         for (Entry entry : postingList) {
@@ -141,6 +143,7 @@ public final class CSE535Assignment {
   
   public static String termAtATimeQueryAnd(Query query) {
     long startTime = System.nanoTime();
+    
     List<String> terms = query.getTerms();
     String out = "FUNCTION: termAtATimeQueryAnd ";
     out += terms.toString().replaceAll("\\[|\\]", "") + "\n";
@@ -163,21 +166,59 @@ public final class CSE535Assignment {
   }
   
   public static String docAtATimeQueryAnd(Query query) {
-    List<String> terms = query.getTerms();
-    List<List<Entry>> postingLists = new ArrayList<List<Entry>>(terms.size());
+    long startTime = System.nanoTime();
+    int comparisons = 0;
     
-    for (String term : terms) {
+    List<Iterator<Entry>> iterators = new ArrayList<Iterator<Entry>>(query.getTerms().size());
+    
+    for (String term : query.getTerms()) {
       List<Entry> postingList = dictionary.get(term);
       if (postingList == null) return "terms not found";
       postingList.sort(ID_COMP);
-      postingLists.add(postingList);
+      iterators.add(postingList.iterator());
     }
     
-    List<Integer> indexes = new ArrayList<Integer>(postingLists.size());
-    int index = 0;
+    List<Entry> results = new ArrayList<Entry>();
+    int total = iterators.size();
+    int current = 0;
+    int skip = -1;
+    Entry max = null;
     
-    while (true) {
+    while (current < total && iterators.get(current).hasNext()) {
+      if (current == skip) {
+        current = current + 1;
+        continue;
+      }
       
+      Entry entry = iterators.get(current).next();
+      
+      int equality;
+      
+      if (max == null) {
+        max = entry;
+        equality = 0;
+      } else {
+        equality = ID_COMP.compare(entry, max);
+        comparisons = comparisons + 1;
+      }
+      
+      if (equality == 0) {
+        if (total == current + 1 || (total == current + 2 && total == skip + 1)) {
+          results.add(max);
+          current = 0;
+          skip = -1;
+          max = null;
+        } else {
+          current = current + 1;
+          continue;
+        }
+      } else if (equality > 0) {
+        max = entry;
+        skip = current;
+        current = 0;
+      } else {
+        continue;
+      }
     }
     
     return null;
@@ -196,6 +237,7 @@ public final class CSE535Assignment {
 	      log.log(getPostings(term));
 	    }
 	    log.log(termAtATimeQueryAnd(query));
+      docAtATimeQueryAnd(query);
 	  }
 	}
 }
