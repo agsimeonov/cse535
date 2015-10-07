@@ -169,9 +169,12 @@ public final class CSE535Assignment {
     long startTime = System.nanoTime();
     int comparisons = 0;
     
-    List<Iterator<Entry>> iterators = new ArrayList<Iterator<Entry>>(query.getTerms().size());
+    List<String> terms = query.getTerms();
+    String out = "FUNCTION: docAtATimeQueryAnd ";
+    out += terms.toString().replaceAll("\\[|\\]", "") + "\n";
+    List<Iterator<Entry>> iterators = new ArrayList<Iterator<Entry>>(terms.size());
     
-    for (String term : query.getTerms()) {
+    for (String term : terms) {
       List<Entry> postingList = dictionary.get(term);
       if (postingList == null) return "terms not found";
       postingList.sort(ID_COMP);
@@ -221,7 +224,13 @@ public final class CSE535Assignment {
       }
     }
     
-    return null;
+    Result result = new Result(results, comparisons);
+    out += result.getResults().size() + " documents are found\n";
+    out += result.getComparisons() + " comparisons are made\n";
+    out += ((double)(System.nanoTime() - startTime)) / 1000000000.0 + " seconds are used\n";
+    out += "Result: " + result;
+    
+    return out;
   }
   
 	/**
@@ -237,7 +246,7 @@ public final class CSE535Assignment {
 	      log.log(getPostings(term));
 	    }
 	    log.log(termAtATimeQueryAnd(query));
-      docAtATimeQueryAnd(query);
+      log.log(docAtATimeQueryAnd(query));
 	  }
 	}
 }
