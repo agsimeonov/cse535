@@ -247,52 +247,50 @@ public final class CSE535Assignment {
     
     for (String term : terms) {
       List<Entry> postingList = dictionary.get(term);
-      if (postingList == null) return "terms not found";
+      if (postingList == null) continue;
       postingList.sort(ID_COMP);
       iterators.add(postingList.iterator());
     }
     
-    List<Entry> results = new LinkedList<Entry>();
-    int total = iterators.size();
-    int current = 0;
-    int skip = -1;
-    Entry max = null;
+    if (iterators.isEmpty()) return "terms not found";
     
-    while (current < total && iterators.get(current).hasNext()) {
-      if (current == skip) {
-        current = current + 1;
-        continue;
-      }
+    List<Entry> results = new LinkedList<Entry>();
+    
+    while (true) {
+      int complete = 0;
       
-      Entry entry = iterators.get(current).next();
-      
-      int equality;
-      
-      if (max == null) {
-        max = entry;
-        equality = 0;
-      } else {
-        equality = ID_COMP.compare(entry, max);
-        comparisons = comparisons + 1;
-      }
-      
-      if (equality == 0) {
-        if (total == current + 1 || (total == current + 2 && total == skip + 1)) {
-          results.add(max);
-          current = 0;
-          skip = -1;
-          max = null;
+      for (Iterator<Entry> iterator : iterators) {     
+        Entry entry;
+        
+        if (iterator.hasNext()) {
+          entry = iterator.next();
         } else {
-          current = current + 1;
+          complete = complete + 1;
           continue;
         }
-      } else if (equality > 0) {
-        max = entry;
-        skip = current;
-        current = 0;
-      } else {
-        continue;
+        
+        if (results.isEmpty()) {
+          results.add(entry);
+          continue;
+        }
+        
+        for (int i = 0; i < results.size(); i++) {
+          Entry result = results.get(i);
+          int equality = ID_COMP.compare(entry, result);
+          comparisons = comparisons + 1;
+          
+          if (equality < 0) {
+            results.add(i, entry);
+            break;
+          } else if (equality == 0) {
+            break;
+          } else {
+            if (i + 1 == results.size()) results.add(entry);
+          }
+        }
       }
+      
+      if (complete == iterators.size()) break;
     }
     
     Result result = new Result(results, comparisons);
@@ -319,6 +317,7 @@ public final class CSE535Assignment {
 	    }
 	    log.log(termAtATimeQueryAnd(query));
       log.log(docAtATimeQueryAnd(query));
+      log.log(docAtATimeQueryOr(query));
 	  }
 	}
 }
