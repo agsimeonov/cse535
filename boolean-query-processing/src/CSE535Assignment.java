@@ -122,7 +122,7 @@ public final class CSE535Assignment {
       if (postingList == null) return null;
       postingList.sort(TF_COMP);
       if (results.isEmpty()) {
-        for (Entry entry : postingList) results.add(entry);
+        results.addAll(postingList);
         if (results.isEmpty()) break;
       } else {
         List<Entry> intermediate = new LinkedList<Entry>();
@@ -143,6 +143,53 @@ public final class CSE535Assignment {
   }
   
   public static String termAtATimeQueryAnd(Query query) {
+    long startTime = System.nanoTime();
+    
+    List<String> terms = query.getTerms();
+    String out = "FUNCTION: termAtATimeQueryAnd ";
+    out += terms.toString().replaceAll("\\[|\\]", "") + "\n";
+    
+    Result result = termAtATimeQueryAnd(terms);
+    if (result == null) return "terms not found";
+    
+    terms.sort(new QueryTermComparator(dictionary));
+    Result optResult = termAtATimeQueryAnd(terms);
+    
+    result.getResults().sort(ID_COMP);
+    
+    out += result.getResults().size() + " documents are found\n";
+    out += result.getComparisons() + " comparisons are made\n";
+    out += String.format("%f", ((double)(System.nanoTime() - startTime)) / 1000000000.0);
+    out += " seconds are used\n";
+    out += optResult.getComparisons() + " are made with optimization (optional bonus part)\n";
+    out += "Result: " + result;
+    
+    return out;
+  }
+  
+  private static Result termAtATimeQueryOr(List<String> terms) {
+    List<Entry> results = new LinkedList<Entry>();
+    int comparisons = 0;
+    
+    List<List<Entry>> postingLists = new LinkedList<List<Entry>>();
+    
+    for (String term : terms) {
+      List<Entry> postingList = dictionary.get(term);
+      if (postingList == null) continue;
+      postingList.sort(TF_COMP);
+      postingLists.add(postingList);
+    }
+    
+    if (postingLists.isEmpty()) return null;
+    
+    for (List<Entry> postingList : postingLists) {
+      if (results.isEmpty()) results.addAll(postingList);
+    }
+    
+    return new Result(results, comparisons);
+  }
+  
+  public static String termAtATimeQueryOr(Query query) {
     long startTime = System.nanoTime();
     
     List<String> terms = query.getTerms();
