@@ -3,6 +3,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -15,7 +16,7 @@ public final class CSE535Assignment {
   private static final Comparator<Entry> ID_COMP = new DocIdComparator();
   private static final Comparator<Entry> TF_COMP = new TermFrequencyComparator();
   
-  private static final List<Posting> postings = new ArrayList<Posting>();
+  private static final List<Posting> postings = new LinkedList<Posting>();
   private static final List<Query> queries = new ArrayList<Query>();
   private static final Map<String, List<Entry>> dictionary = new HashMap<String, List<Entry>>();
   private static Log log;
@@ -158,7 +159,8 @@ public final class CSE535Assignment {
     
     out += result.getResults().size() + " documents are found\n";
     out += result.getComparisons() + " comparisons are made\n";
-    out += ((double)(System.nanoTime() - startTime)) / 1000000000.0 + " seconds are used\n";
+    out += String.format("%f", ((double)(System.nanoTime() - startTime)) / 1000000000.0);
+    out += " seconds are used\n";
     out += optResult.getComparisons() + " are made with optimization (optional bonus part)\n";
     out += "Result: " + result;
     
@@ -227,7 +229,77 @@ public final class CSE535Assignment {
     Result result = new Result(results, comparisons);
     out += result.getResults().size() + " documents are found\n";
     out += result.getComparisons() + " comparisons are made\n";
-    out += ((double)(System.nanoTime() - startTime)) / 1000000000.0 + " seconds are used\n";
+    out += String.format("%f", ((double)(System.nanoTime() - startTime)) / 1000000000.0);
+    out += " seconds are used\n";
+    out += "Result: " + result;
+    
+    return out;
+  }
+  
+  public static String docAtATimeQueryOr(Query query) {
+    long startTime = System.nanoTime();
+    int comparisons = 0;
+    
+    List<String> terms = query.getTerms();
+    String out = "FUNCTION: docAtATimeQueryOr ";
+    out += terms.toString().replaceAll("\\[|\\]", "") + "\n";
+    List<Iterator<Entry>> iterators = new ArrayList<Iterator<Entry>>(terms.size());
+    
+    for (String term : terms) {
+      List<Entry> postingList = dictionary.get(term);
+      if (postingList == null) return "terms not found";
+      postingList.sort(ID_COMP);
+      iterators.add(postingList.iterator());
+    }
+    
+    List<Entry> results = new ArrayList<Entry>();
+    int total = iterators.size();
+    int current = 0;
+    int skip = -1;
+    Entry max = null;
+    
+    while (current < total && iterators.get(current).hasNext()) {
+      if (current == skip) {
+        current = current + 1;
+        continue;
+      }
+      
+      Entry entry = iterators.get(current).next();
+      
+      int equality;
+      
+      if (max == null) {
+        max = entry;
+        equality = 0;
+      } else {
+        equality = ID_COMP.compare(entry, max);
+        comparisons = comparisons + 1;
+      }
+      
+      if (equality == 0) {
+        if (total == current + 1 || (total == current + 2 && total == skip + 1)) {
+          results.add(max);
+          current = 0;
+          skip = -1;
+          max = null;
+        } else {
+          current = current + 1;
+          continue;
+        }
+      } else if (equality > 0) {
+        max = entry;
+        skip = current;
+        current = 0;
+      } else {
+        continue;
+      }
+    }
+    
+    Result result = new Result(results, comparisons);
+    out += result.getResults().size() + " documents are found\n";
+    out += result.getComparisons() + " comparisons are made\n";
+    out += String.format("%f", ((double)(System.nanoTime() - startTime)) / 1000000000.0);
+    out += " seconds are used\n";
     out += "Result: " + result;
     
     return out;

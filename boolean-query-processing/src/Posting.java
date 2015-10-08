@@ -1,4 +1,4 @@
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -18,7 +18,7 @@ public class Posting implements Comparable<Posting> {
   public Posting(String line) {
     String[] split = line.split("\\\\[cm]");
     term = split[0];
-    postingList = new ArrayList<Entry>(Integer.parseInt(split[1]));
+    postingList = new LinkedList<Entry>();
     String entries = split[2].substring(1, split[2].length() - 1);
     for (String entry : entries.split(", "))
       postingList.add(new Entry(entry));
