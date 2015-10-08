@@ -183,7 +183,18 @@ public final class CSE535Assignment {
     if (postingLists.isEmpty()) return null;
     
     for (List<Entry> postingList : postingLists) {
-      if (results.isEmpty()) results.addAll(postingList);
+      if (results.isEmpty()) {
+        results.addAll(postingList);
+        continue;
+      }
+
+      List<Entry> intermediate = new LinkedList<Entry>();
+      
+      for (Entry enty : postingList) {
+        for (Entry result : results) {
+          // TODO: Compare and all that cool stuff :D
+        }
+      }
     }
     
     return new Result(results, comparisons);
