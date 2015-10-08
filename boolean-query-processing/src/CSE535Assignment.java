@@ -114,7 +114,7 @@ public final class CSE535Assignment {
    * @return a pair of results and number of comparisons, null if a term could not be found
    */
   private static Result termAtATimeQueryAnd(List<String> terms) {
-    List<Entry> results = new ArrayList<Entry>();
+    List<Entry> results = new LinkedList<Entry>();
     int comparisons = 0;
     
     for (String term : terms) {
@@ -125,7 +125,7 @@ public final class CSE535Assignment {
         for (Entry entry : postingList) results.add(entry);
         if (results.isEmpty()) break;
       } else {
-        List<Entry> intermediate = new ArrayList<Entry>();
+        List<Entry> intermediate = new LinkedList<Entry>();
         for (Entry entry : postingList) {
           for (Entry result : results) {
             comparisons += 1;
@@ -183,7 +183,7 @@ public final class CSE535Assignment {
       iterators.add(postingList.iterator());
     }
     
-    List<Entry> results = new ArrayList<Entry>();
+    List<Entry> results = new LinkedList<Entry>();
     int total = iterators.size();
     int current = 0;
     int skip = -1;
@@ -252,7 +252,7 @@ public final class CSE535Assignment {
       iterators.add(postingList.iterator());
     }
     
-    List<Entry> results = new ArrayList<Entry>();
+    List<Entry> results = new LinkedList<Entry>();
     int total = iterators.size();
     int current = 0;
     int skip = -1;
