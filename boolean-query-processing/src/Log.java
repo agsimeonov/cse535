@@ -19,7 +19,7 @@ public class Log {
    */
   public Log(String file) {
     try {
-      FileOutputStream stream = new FileOutputStream(file, true);
+      FileOutputStream stream = new FileOutputStream(file, false);
       this.writer = new BufferedWriter(new OutputStreamWriter(stream));
     } catch (FileNotFoundException e) {
       e.printStackTrace();
