@@ -375,5 +375,6 @@ public final class CSE535Assignment {
       log.log(docAtATimeQueryAnd(query));
       log.log(docAtATimeQueryOr(query));
 	  }
+	  log.close();
 	}
 }
