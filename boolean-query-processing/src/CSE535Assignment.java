@@ -161,7 +161,7 @@ public final class CSE535Assignment {
     out += result.getComparisons() + " comparisons are made\n";
     out += String.format("%f", ((double)(System.nanoTime() - startTime)) / 1000000000.0);
     out += " seconds are used\n";
-    out += optResult.getComparisons() + " are made with optimization (optional bonus part)\n";
+    out += optResult.getComparisons() + " comparisons are made with optimization (optional bonus part)\n";
     out += "Result: " + result;
     
     return out;
@@ -203,13 +203,13 @@ public final class CSE535Assignment {
           }
         }
         
-        if (found) break;
+        if (found) continue;
         intermediate.add(entry);
       }
       
       results.addAll(intermediate);
     }
-    
+
     return new Result(results, comparisons);
   }
   
@@ -232,7 +232,7 @@ public final class CSE535Assignment {
     out += result.getComparisons() + " comparisons are made\n";
     out += String.format("%f", ((double)(System.nanoTime() - startTime)) / 1000000000.0);
     out += " seconds are used\n";
-    out += optResult.getComparisons() + " are made with optimization (optional bonus part)\n";
+    out += optResult.getComparisons() + " comparisons are made with optimization (optional bonus part)\n";
     out += "Result: " + result;
     
     return out;
@@ -386,9 +386,9 @@ public final class CSE535Assignment {
 	    for (String term : query.getTerms()) {
 	      log.log(getPostings(term));
 	    }
-	    log.log(termAtATimeQueryAnd(query));
+//	    log.log(termAtATimeQueryAnd(query));
       log.log(termAtATimeQueryOr(query));
-      log.log(docAtATimeQueryAnd(query));
+//      log.log(docAtATimeQueryAnd(query));
       log.log(docAtATimeQueryOr(query));
 	  }
 	}
