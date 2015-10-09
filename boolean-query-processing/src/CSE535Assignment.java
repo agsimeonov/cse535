@@ -190,11 +190,24 @@ public final class CSE535Assignment {
 
       List<Entry> intermediate = new LinkedList<Entry>();
       
-      for (Entry enty : postingList) {
+      for (Entry entry : postingList) {
+        boolean found = false;
+        
         for (Entry result : results) {
-          // TODO: Compare and all that cool stuff :D
+          int equality = ID_COMP.compare(entry, result);
+          comparisons = comparisons + 1;
+          
+          if (equality == 0) {
+            found = true;
+            break;
+          }
         }
+        
+        if (found) break;
+        intermediate.add(entry);
       }
+      
+      results.addAll(intermediate);
     }
     
     return new Result(results, comparisons);
@@ -204,14 +217,14 @@ public final class CSE535Assignment {
     long startTime = System.nanoTime();
     
     List<String> terms = query.getTerms();
-    String out = "FUNCTION: termAtATimeQueryAnd ";
+    String out = "FUNCTION: termAtATimeQueryOr ";
     out += terms.toString().replaceAll("\\[|\\]", "") + "\n";
     
-    Result result = termAtATimeQueryAnd(terms);
+    Result result = termAtATimeQueryOr(terms);
     if (result == null) return "terms not found";
     
     terms.sort(new QueryTermComparator(dictionary));
-    Result optResult = termAtATimeQueryAnd(terms);
+    Result optResult = termAtATimeQueryOr(terms);
     
     result.getResults().sort(ID_COMP);
     
@@ -374,6 +387,7 @@ public final class CSE535Assignment {
 	      log.log(getPostings(term));
 	    }
 	    log.log(termAtATimeQueryAnd(query));
+      log.log(termAtATimeQueryOr(query));
       log.log(docAtATimeQueryAnd(query));
       log.log(docAtATimeQueryOr(query));
 	  }
