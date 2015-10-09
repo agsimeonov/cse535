@@ -107,6 +107,29 @@ public final class CSE535Assignment {
     return out;
   }
   
+  public static String getResultString(Query query, Result result, Result optimal, long startTime) {
+    String out = "FUNCTION: " + Thread.currentThread().getStackTrace()[2].getMethodName() + " ";
+    out += query.getTerms().toString().replaceAll("\\[|\\]", "") + "\n";
+    
+    if (result == null) {
+      out += "terms not found";
+    } else {
+      out += result.getResults().size() + " documents are found\n";
+      out += result.getComparisons() + " comparisons are made\n";
+      out += String.format("%f", ((double)(System.nanoTime() - startTime)) / 1000000000.0);
+      out += " seconds are used\n";
+      
+      if (optimal != null) {
+        out += optimal.getComparisons();
+        out += " comparisons are made with optimization (optional bonus part)\n";
+      }
+      
+      out += "Result: " + result;
+    }
+    
+    return out;
+  }
+  
   /**
    * Performs term-at-a-time query and, used as helper do be done for optimized terms as well.
    * 
@@ -146,25 +169,15 @@ public final class CSE535Assignment {
     long startTime = System.nanoTime();
     
     List<String> terms = query.getTerms();
-    String out = "FUNCTION: termAtATimeQueryAnd ";
-    out += terms.toString().replaceAll("\\[|\\]", "") + "\n";
     
     Result result = termAtATimeQueryAnd(terms);
-    if (result == null) return "terms not found";
+    if (result == null) return getResultString(query, null, null, startTime);
     
     terms.sort(new QueryTermComparator(dictionary));
     Result optResult = termAtATimeQueryAnd(terms);
     
     result.getResults().sort(ID_COMP);
-    
-    out += result.getResults().size() + " documents are found\n";
-    out += result.getComparisons() + " comparisons are made\n";
-    out += String.format("%f", ((double)(System.nanoTime() - startTime)) / 1000000000.0);
-    out += " seconds are used\n";
-    out += optResult.getComparisons() + " comparisons are made with optimization (optional bonus part)\n";
-    out += "Result: " + result;
-    
-    return out;
+    return getResultString(query, result, optResult, startTime);
   }
   
   private static Result termAtATimeQueryOr(List<String> terms) {
@@ -217,25 +230,14 @@ public final class CSE535Assignment {
     long startTime = System.nanoTime();
     
     List<String> terms = query.getTerms();
-    String out = "FUNCTION: termAtATimeQueryOr ";
-    out += terms.toString().replaceAll("\\[|\\]", "") + "\n";
-    
     Result result = termAtATimeQueryOr(terms);
-    if (result == null) return "terms not found";
+    if (result == null) return getResultString(query, null, null, startTime);
     
     terms.sort(new QueryTermComparator(dictionary));
     Result optResult = termAtATimeQueryOr(terms);
     
     result.getResults().sort(ID_COMP);
-    
-    out += result.getResults().size() + " documents are found\n";
-    out += result.getComparisons() + " comparisons are made\n";
-    out += String.format("%f", ((double)(System.nanoTime() - startTime)) / 1000000000.0);
-    out += " seconds are used\n";
-    out += optResult.getComparisons() + " comparisons are made with optimization (optional bonus part)\n";
-    out += "Result: " + result;
-    
-    return out;
+    return getResultString(query, result, optResult, startTime);
   }
   
   public static String docAtATimeQueryAnd(Query query) {
@@ -243,13 +245,11 @@ public final class CSE535Assignment {
     int comparisons = 0;
     
     List<String> terms = query.getTerms();
-    String out = "FUNCTION: docAtATimeQueryAnd ";
-    out += terms.toString().replaceAll("\\[|\\]", "") + "\n";
     List<Iterator<Entry>> iterators = new ArrayList<Iterator<Entry>>(terms.size());
     
     for (String term : terms) {
       List<Entry> postingList = dictionary.get(term);
-      if (postingList == null) return "terms not found";
+      if (postingList == null) return getResultString(query, null, null, startTime);
       postingList.sort(ID_COMP);
       iterators.add(postingList.iterator());
     }
@@ -296,15 +296,8 @@ public final class CSE535Assignment {
         continue;
       }
     }
-    
-    Result result = new Result(results, comparisons);
-    out += result.getResults().size() + " documents are found\n";
-    out += result.getComparisons() + " comparisons are made\n";
-    out += String.format("%f", ((double)(System.nanoTime() - startTime)) / 1000000000.0);
-    out += " seconds are used\n";
-    out += "Result: " + result;
-    
-    return out;
+
+    return getResultString(query, new Result(results, comparisons), null, startTime);
   }
   
   public static String docAtATimeQueryOr(Query query) {
@@ -312,8 +305,6 @@ public final class CSE535Assignment {
     int comparisons = 0;
     
     List<String> terms = query.getTerms();
-    String out = "FUNCTION: docAtATimeQueryOr ";
-    out += terms.toString().replaceAll("\\[|\\]", "") + "\n";
     List<Iterator<Entry>> iterators = new ArrayList<Iterator<Entry>>(terms.size());
     
     for (String term : terms) {
@@ -323,7 +314,7 @@ public final class CSE535Assignment {
       iterators.add(postingList.iterator());
     }
     
-    if (iterators.isEmpty()) return "terms not found";
+    if (iterators.isEmpty()) return getResultString(query, null, null, startTime);
     
     List<Entry> results = new LinkedList<Entry>();
     
@@ -364,14 +355,7 @@ public final class CSE535Assignment {
       if (complete == iterators.size()) break;
     }
     
-    Result result = new Result(results, comparisons);
-    out += result.getResults().size() + " documents are found\n";
-    out += result.getComparisons() + " comparisons are made\n";
-    out += String.format("%f", ((double)(System.nanoTime() - startTime)) / 1000000000.0);
-    out += " seconds are used\n";
-    out += "Result: " + result;
-    
-    return out;
+    return getResultString(query, new Result(results, comparisons), null, startTime);
   }
   
 	/**
@@ -386,9 +370,9 @@ public final class CSE535Assignment {
 	    for (String term : query.getTerms()) {
 	      log.log(getPostings(term));
 	    }
-//	    log.log(termAtATimeQueryAnd(query));
+	    log.log(termAtATimeQueryAnd(query));
       log.log(termAtATimeQueryOr(query));
-//      log.log(docAtATimeQueryAnd(query));
+      log.log(docAtATimeQueryAnd(query));
       log.log(docAtATimeQueryOr(query));
 	  }
 	}
