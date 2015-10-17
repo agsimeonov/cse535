@@ -13,8 +13,8 @@ import java.util.Map;
  * @author Alexander Simeonov
  */
 public final class CSE535Assignment {
-  private static final Comparator<Entry> ID_COMP = new DocIdComparator();
-  private static final Comparator<Entry> TF_COMP = new TermFrequencyComparator();
+  private static final Comparator<Entry> BY_ID = new DocIdComparator();
+  private static final Comparator<Entry> BY_TF = new TermFrequencyComparator();
   
   private static final List<Posting> postings = new LinkedList<Posting>();
   private static final List<Query> queries = new ArrayList<Query>();
@@ -95,10 +95,10 @@ public final class CSE535Assignment {
     List<Entry> postingList = dictionary.get(query_term);
     if (postingList != null) {
       out += "Ordered by doc IDs: ";
-      postingList.sort(ID_COMP);
+      postingList.sort(BY_ID);
       out += postingList.toString().replaceAll("\\[|\\]", "") + "\n";
       out += "Ordered by TF: ";
-      postingList.sort(TF_COMP);
+      postingList.sort(BY_TF);
       out += postingList.toString().replaceAll("\\[|\\]", "");   
     } else {
       out += "term not found";
@@ -143,7 +143,7 @@ public final class CSE535Assignment {
     for (String term : terms) {
       List<Entry> postingList = dictionary.get(term);
       if (postingList == null) return null;
-      postingList.sort(TF_COMP);
+      postingList.sort(BY_TF);
       if (results.isEmpty()) {
         results.addAll(postingList);
         if (results.isEmpty()) break;
@@ -152,7 +152,7 @@ public final class CSE535Assignment {
         for (Entry entry : postingList) {
           for (Entry result : results) {
             comparisons += 1;
-            if (ID_COMP.compare(entry, result) == 0) {
+            if (BY_ID.compare(entry, result) == 0) {
               intermediate.add(entry);
               break;
             }
@@ -176,7 +176,7 @@ public final class CSE535Assignment {
     terms.sort(new QueryTermComparator(dictionary));
     Result optResult = termAtATimeQueryAnd(terms);
     
-    result.getResults().sort(ID_COMP);
+    result.getResults().sort(BY_ID);
     return getResultString(query, result, optResult, startTime);
   }
   
@@ -189,7 +189,7 @@ public final class CSE535Assignment {
     for (String term : terms) {
       List<Entry> postingList = dictionary.get(term);
       if (postingList == null) continue;
-      postingList.sort(TF_COMP);
+      postingList.sort(BY_TF);
       postingLists.add(postingList);
     }
     
@@ -207,7 +207,7 @@ public final class CSE535Assignment {
         boolean found = false;
         
         for (Entry result : results) {
-          int equality = ID_COMP.compare(entry, result);
+          int equality = BY_ID.compare(entry, result);
           comparisons = comparisons + 1;
           
           if (equality == 0) {
@@ -236,7 +236,7 @@ public final class CSE535Assignment {
     terms.sort(new QueryTermComparator(dictionary));
     Result optResult = termAtATimeQueryOr(terms);
     
-    result.getResults().sort(ID_COMP);
+    result.getResults().sort(BY_ID);
     return getResultString(query, result, optResult, startTime);
   }
   
@@ -250,7 +250,7 @@ public final class CSE535Assignment {
     for (String term : terms) {
       List<Entry> postingList = dictionary.get(term);
       if (postingList == null) return getResultString(query, null, null, startTime);
-      postingList.sort(ID_COMP);
+      postingList.sort(BY_ID);
       iterators.add(postingList.iterator());
     }
     
@@ -274,7 +274,7 @@ public final class CSE535Assignment {
         max = entry;
         equality = 0;
       } else {
-        equality = ID_COMP.compare(entry, max);
+        equality = BY_ID.compare(entry, max);
         comparisons = comparisons + 1;
       }
       
@@ -310,7 +310,7 @@ public final class CSE535Assignment {
     for (String term : terms) {
       List<Entry> postingList = dictionary.get(term);
       if (postingList == null) continue;
-      postingList.sort(ID_COMP);
+      postingList.sort(BY_ID);
       iterators.add(postingList.iterator());
     }
     
@@ -338,7 +338,7 @@ public final class CSE535Assignment {
         
         for (int i = 0; i < results.size(); i++) {
           Entry result = results.get(i);
-          int equality = ID_COMP.compare(entry, result);
+          int equality = BY_ID.compare(entry, result);
           comparisons = comparisons + 1;
           
           if (equality < 0) {
