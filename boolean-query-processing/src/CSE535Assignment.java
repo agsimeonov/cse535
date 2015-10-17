@@ -108,6 +108,15 @@ public final class CSE535Assignment {
     return out;
   }
   
+  /**
+   * Acquires the result string for DAAT and TAAT queries.
+   * 
+   * @param query - the given query
+   * @param result - regular result
+   * @param optimal - optimized query result
+   * @param startTime - start time of computation
+   * @return the result string in the expected format
+   */
   public static String getResultString(Query query, Result result, Result optimal, long startTime) {
     String out = "FUNCTION: " + Thread.currentThread().getStackTrace()[2].getMethodName() + " ";
     out += query.getTerms().toString().replaceAll("\\[|\\]", "") + "\n";
@@ -143,8 +152,8 @@ public final class CSE535Assignment {
     
     for (String term : terms) {
       List<Entry> postingList = dictionary.get(term);
-      if (postingList == null) return null;
-      postingList.sort(BY_TF);
+      if (postingList == null) return null; // a term wasn't found
+      postingList.sort(BY_TF); // make sure we order by decreasing TF
       if (results.isEmpty()) {
         results.addAll(postingList);
         if (results.isEmpty()) break;
@@ -153,6 +162,7 @@ public final class CSE535Assignment {
         for (Entry entry : postingList) {
           for (Entry result : results) {
             comparisons += 1;
+            // only care if their IDs equal
             if (BY_ID.compare(entry, result) == 0) {
               intermediate.add(entry);
               break;
@@ -166,6 +176,12 @@ public final class CSE535Assignment {
     return new Result(results, comparisons);
   }
   
+  /**
+   * Performs regular and optimized TAAT AND.
+   * 
+   * @param query - given query
+   * @return result formatted string
+   */
   public static String termAtATimeQueryAnd(Query query) {
     long startTime = System.nanoTime();
     
@@ -175,12 +191,18 @@ public final class CSE535Assignment {
     if (result == null) return getResultString(query, null, null, startTime);
     
     terms.sort(new QueryTermComparator(dictionary));
-    Result optResult = termAtATimeQueryAnd(terms);
+    Result optResult = termAtATimeQueryAnd(terms); // optional bonus
     
     result.getResults().sort(BY_ID);
     return getResultString(query, result, optResult, startTime);
   }
   
+  /**
+   * Helper function for TAAT OR.  Used so that one can perform both regular and optimized.
+   * 
+   * @param terms - the query terms
+   * @return a pair of results and number of comparisons, null if no terms could not be 
+   */
   private static Result termAtATimeQueryOr(List<String> terms) {
     List<Entry> results = new LinkedList<Entry>();
     int comparisons = 0;
@@ -190,11 +212,11 @@ public final class CSE535Assignment {
     for (String term : terms) {
       List<Entry> postingList = dictionary.get(term);
       if (postingList == null) continue;
-      postingList.sort(BY_TF);
+      postingList.sort(BY_TF); // make sure we order by decreasing TF
       postingLists.add(postingList);
     }
     
-    if (postingLists.isEmpty()) return null;
+    if (postingLists.isEmpty()) return null; // no terms were found
     
     for (List<Entry> postingList : postingLists) {
       if (results.isEmpty()) {
@@ -211,6 +233,7 @@ public final class CSE535Assignment {
           int equality = BY_ID.compare(entry, result);
           comparisons = comparisons + 1;
           
+          // make sure we have no duplicates
           if (equality == 0) {
             found = true;
             break;
@@ -227,6 +250,12 @@ public final class CSE535Assignment {
     return new Result(results, comparisons);
   }
   
+  /**
+   * Performs regular and optimized TAAT OR.
+   * 
+   * @param query - given query
+   * @return result formatted string
+   */
   public static String termAtATimeQueryOr(Query query) {
     long startTime = System.nanoTime();
     
@@ -235,12 +264,18 @@ public final class CSE535Assignment {
     if (result == null) return getResultString(query, null, null, startTime);
     
     terms.sort(new QueryTermComparator(dictionary));
-    Result optResult = termAtATimeQueryOr(terms);
+    Result optResult = termAtATimeQueryOr(terms); // optional bonus
     
     result.getResults().sort(BY_ID);
     return getResultString(query, result, optResult, startTime);
   }
   
+  /**
+   * Performs DAAT AND, modified version of Figure 1.6.
+   * 
+   * @param query - given query
+   * @return result formatted string
+   */
   public static String docAtATimeQueryAnd(Query query) {
     long startTime = System.nanoTime();
     int comparisons = 0;
@@ -250,8 +285,8 @@ public final class CSE535Assignment {
     
     for (String term : terms) {
       List<Entry> postingList = dictionary.get(term);
-      if (postingList == null) return getResultString(query, null, null, startTime);
-      postingList.sort(BY_ID);
+      if (postingList == null) return getResultString(query, null, null, startTime); // missing term
+      postingList.sort(BY_ID); // sort by increasing doc id
       iterators.add(postingList.iterator());
     }
     
@@ -279,7 +314,7 @@ public final class CSE535Assignment {
         comparisons = comparisons + 1;
       }
       
-      if (equality == 0) {
+      if (equality == 0) { // add result if everything equals
         if (total == current + 1 || (total == current + 2 && total == skip + 1)) {
           results.add(max);
           current = 0;
@@ -289,11 +324,11 @@ public final class CSE535Assignment {
           current = current + 1;
           continue;
         }
-      } else if (equality > 0) {
+      } else if (equality > 0) { // if we find a new max entry use this one
         max = entry;
         skip = current;
         current = 0;
-      } else {
+      } else { // keep going this entry is lower then the current max
         continue;
       }
     }
@@ -301,6 +336,12 @@ public final class CSE535Assignment {
     return getResultString(query, new Result(results, comparisons), null, startTime);
   }
   
+  /**
+   * Performs DAAT OR, modified version of Figure 1.6.
+   * 
+   * @param query - given query
+   * @return result formatted string
+   */
   public static String docAtATimeQueryOr(Query query) {
     long startTime = System.nanoTime();
     int comparisons = 0;
@@ -311,10 +352,11 @@ public final class CSE535Assignment {
     for (String term : terms) {
       List<Entry> postingList = dictionary.get(term);
       if (postingList == null) continue;
-      postingList.sort(BY_ID);
+      postingList.sort(BY_ID); // sort by increasing doc id
       postingLists.add(postingList);
     }
     
+    // all terms are not found
     if (postingLists.isEmpty()) return getResultString(query, null, null, startTime);
     
     List<Entry> results = new LinkedList<Entry>();
@@ -332,16 +374,16 @@ public final class CSE535Assignment {
         if (index < postingList.size()) {
           Entry entry = postingList.get(index);
           
-          if (min == null) {
+          if (min == null) { // no min yet get one
             min = entry;
             positions.add(i);
-          } else {
+          } else { // see if your current min changes
             int equality = BY_ID.compare(entry, min);
             comparisons = comparisons + 1;
             
-            if (equality == 0) {
+            if (equality == 0) { // your current min doesn't change note position
               positions.add(i);
-            } else if (equality < 0) {
+            } else if (equality < 0) { // your current min changes wipe previous note this position
               min = entry;
               positions.clear();
               positions.add(i);
@@ -350,10 +392,11 @@ public final class CSE535Assignment {
         }
       }
       
-      if (min != null) {
+      // you finished a single pass through all docs
+      if (min != null) { // add min found and increment pointers of docs that match the min
         results.add(min);
         for (Integer position : positions) indexes[position] = indexes[position] + 1;
-      } else {
+      } else { // no more entries
         break;
       }
     }
