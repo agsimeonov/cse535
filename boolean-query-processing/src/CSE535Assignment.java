@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -305,54 +306,56 @@ public final class CSE535Assignment {
     int comparisons = 0;
     
     List<String> terms = query.getTerms();
-    List<Iterator<Entry>> iterators = new ArrayList<Iterator<Entry>>(terms.size());
+    List<List<Entry>> postingLists = new ArrayList<List<Entry>>(terms.size());
     
     for (String term : terms) {
       List<Entry> postingList = dictionary.get(term);
       if (postingList == null) continue;
       postingList.sort(BY_ID);
-      iterators.add(postingList.iterator());
+      postingLists.add(postingList);
     }
     
-    if (iterators.isEmpty()) return getResultString(query, null, null, startTime);
+    if (postingLists.isEmpty()) return getResultString(query, null, null, startTime);
     
     List<Entry> results = new LinkedList<Entry>();
+    int[] indexes = new int[postingLists.size()];
+    Arrays.fill(indexes, 0);
     
-    while (true) {
-      int complete = 0;
+    while(true) {
+      Entry min = null;
+      List<Integer> positions = new LinkedList<Integer>();
       
-      for (Iterator<Entry> iterator : iterators) {     
-        Entry entry;
-        
-        if (iterator.hasNext()) {
-          entry = iterator.next();
-        } else {
-          complete = complete + 1;
-          continue;
-        }
-        
-        if (results.isEmpty()) {
-          results.add(entry);
-          continue;
-        }
-        
-        for (int i = 0; i < results.size(); i++) {
-          Entry result = results.get(i);
-          int equality = BY_ID.compare(entry, result);
-          comparisons = comparisons + 1;
+      for (int i = 0; i < postingLists.size(); i++) {
+        List<Entry> postingList = postingLists.get(i);
+        int index = indexes[i];
+
+        if (index < postingList.size()) {
+          Entry entry = postingList.get(index);
           
-          if (equality < 0) {
-            results.add(i, entry);
-            break;
-          } else if (equality == 0) {
-            break;
+          if (min == null) {
+            min = entry;
+            positions.add(i);
           } else {
-            if (i + 1 == results.size()) results.add(entry);
+            int equality = BY_ID.compare(entry, min);
+            comparisons = comparisons + 1;
+            
+            if (equality == 0) {
+              positions.add(i);
+            } else if (equality < 0) {
+              min = entry;
+              positions.clear();
+              positions.add(i);
+            }
           }
         }
       }
       
-      if (complete == iterators.size()) break;
+      if (min != null) {
+        results.add(min);
+        for (Integer position : positions) indexes[position] = indexes[position] + 1;
+      } else {
+        break;
+      }
     }
     
     return getResultString(query, new Result(results, comparisons), null, startTime);
