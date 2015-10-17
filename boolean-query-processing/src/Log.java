@@ -11,7 +11,6 @@ import java.io.OutputStreamWriter;
  */
 public class Log {
   private BufferedWriter writer;
-  private BufferedWriter system;
   
   /**
    * Initializes the log file.
@@ -19,14 +18,17 @@ public class Log {
    * @param file - log file location
    */
   public Log(String file) {
+    /*
+    this.writer = new BufferedWriter(new OutputStreamWriter(System.out));
+    /*/
     try {
       FileOutputStream stream = new FileOutputStream(file, false);
       this.writer = new BufferedWriter(new OutputStreamWriter(stream));
-      this.system = new BufferedWriter(new OutputStreamWriter(System.out));
     } catch (FileNotFoundException e) {
       e.printStackTrace();
       System.exit(1);
     }
+    //*/
   }
   
   /**
@@ -38,20 +40,15 @@ public class Log {
     try {
       writer.append(string);
       writer.append("\n");
-      system.append(string);
-      system.append("\n");
     } catch (IOException e) {
       e.printStackTrace();
     }
-    
-    System.out.println(string);
   }
   
   /** Closes out the log file. */
   public void close() {
     try {
       writer.close();
-      system.close();
     } catch (IOException e) {
       e.printStackTrace();
     }
