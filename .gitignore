@@ -1,7 +1,7 @@
 # Some files/folders strictly used for testing
-data/partb_data/*
+data/partb_data/
 solr-5.3.0.tgz
-solr-5.3.0/*
+solr-5.3.0/
 
 .DS_Store
 *.class
