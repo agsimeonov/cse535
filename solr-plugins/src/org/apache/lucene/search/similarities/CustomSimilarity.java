@@ -6,21 +6,21 @@ import org.apache.lucene.search.similarities.DefaultSimilarity;
 public class CustomSimilarity extends DefaultSimilarity {
   @Override
   public float coord(int overlap, int maxOverlap) {
-    return 1.0f;
+    return super.coord(overlap, maxOverlap);
   }
 
   @Override
   public float idf(long docFreq, long numDocs) {
-    return 1.0f;
+    return super.idf(docFreq, numDocs);
   }
 
   @Override
-  public float lengthNorm(FieldInvertState arg0) {
-    return 1.0f;
+  public float lengthNorm(FieldInvertState state) {
+    return super.lengthNorm(state);
   }
 
   @Override
   public float tf(float freq) {
-    return 1.0f;
+    return super.tf(freq);
   }
 }
