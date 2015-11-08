@@ -4,24 +4,14 @@ import json
 from sys import argv, exit
 from urllib2 import urlopen
 
-import goslate
-
 
 # Make sure we have the correct command line arguments
-if len(argv) != 5:
+if len(argv) != 4:
   print "Please provide command line arguments as follows:"
-  print "python solrtrec.py <Formatted Query File> <Output File> <Domain> <Core>"
+  print "python solrtrec.py <Formatted Query File> <Output File> <Model>"
   exit(0)
 
-port = 8983
-prepend = "http://" + argv[3] + ":" + str(port) + "/solr/" + argv[4] + "/select?q="
-append = '&fl=id%2Cscore&wt=json&indent=true&rows=1000'
 urls = [] # (id, url) format
-model='default'
-
-gs = goslate.Goslate(service_urls=['http://translate.google.ca',
-                                   'http://translate.google.nl',
-                                   'http://translate.google.co.uk'])
 
 with open(argv[1]) as queries:
   for query in queries.read().splitlines():
@@ -36,7 +26,7 @@ for url in urls:
   
   rank = 1
   for doc in docs:
-    output.write(url[0] + ' ' + 'Q0' + ' ' + str(doc['id']) + ' ' + str(rank) + ' ' + str(doc['score']) + ' ' + model + '\n')
+    output.write(url[0] + ' ' + 'Q0' + ' ' + str(doc['id']) + ' ' + str(rank) + ' ' + str(doc['score']) + ' ' + argv[3] + '\n')
     rank += 1
 
 output.close()

@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 
 import codecs
+import json
 from sys import argv, exit
-from urllib2 import quote
+from urllib2 import quote, urlopen
 
 import goslate
 
@@ -15,24 +16,33 @@ if len(argv) != 5:
 
 port = 8983
 prepend = 'http://' + argv[3] + ':' + str(port) + '/solr/' + argv[4] + '/select?q='
-append = '&fl=id%2Cscore&wt=json&indent=true&rows=1000'
+append = '&fl=id%2Cscore&wt=json&indent=true&rows='
 urls = [] # (id, url) format
+
+data = urlopen(prepend + '*' + append + '0')
+rows = json.load(data)['response']['numFound']
 
 gs = goslate.Goslate(service_urls=['http://translate.google.ca',
                                    'http://translate.google.nl',
                                    'http://translate.google.co.uk'])
 
+def escapeSpecialCharacters(text):
+  for character in ['\\', '+', '-', '&&', '||', '!', '(', ')', '{', '}', '[', ']', '^', '"', '~', '*', '?', ':', '/', ' ']:
+    if character in text:
+      text = text.replace(character, '\\' + character)
+  return text
+
 with codecs.open(argv[1],encoding='utf-8') as queries:
   for query in queries.read().splitlines():
     split = query.split(' ', 1)
-    en = gs.translate(split[1], 'en')
-    de = gs.translate(split[1], 'de')
-    ru = gs.translate(split[1], 'ru')
-    q =  'text_en:"' + en + '" OR '
-    q += 'text_de:"' + de + '" OR '
-    q += 'text_ru:"' + ru + '"'
+    en = escapeSpecialCharacters(gs.translate(split[1], 'en'))
+    de = escapeSpecialCharacters(gs.translate(split[1], 'de'))
+    ru = escapeSpecialCharacters(gs.translate(split[1], 'ru'))
+    q =  'text_en:' + en + ' OR '
+    q += 'text_de:' + de + ' OR '
+    q += 'text_ru:' + ru + ''
     q= quote(q.encode('utf-8'))
-    url = prepend + q + append
+    url = prepend + q + append + str(rows)
     urls.append((split[0], url))
 
 with open(argv[2], 'w') as output:
