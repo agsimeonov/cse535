@@ -2,6 +2,7 @@
 data/partb_data/
 solr-5.3.0.tgz
 solr-5.3.0/
+solr-trec/out/
 
 .DS_Store
 *.class
