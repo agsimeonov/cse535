@@ -1,4 +1,4 @@
-package org.apache.lucene.search.similarities;
+package edu.buffalo.cse535;
 
 import org.apache.lucene.index.FieldInvertState;
 import org.apache.lucene.search.similarities.DefaultSimilarity;
