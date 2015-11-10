@@ -38,10 +38,8 @@ with codecs.open(argv[1],encoding='utf-8') as queries:
     en = escapeSpecialCharacters(gs.translate(split[1], 'en'))
     de = escapeSpecialCharacters(gs.translate(split[1], 'de'))
     ru = escapeSpecialCharacters(gs.translate(split[1], 'ru'))
-    q =  'text_en:' + en + ' OR '
-    q += 'text_de:' + de + ' OR '
-    q += 'text_ru:' + ru + ''
-    q= quote(q.encode('utf-8'))
+    q = en + ' OR ' + de + ' OR ' + ru
+    q = quote(q.encode('utf-8'))
     url = prepend + q + append + str(rows)
     urls.append((split[0], url))
 
