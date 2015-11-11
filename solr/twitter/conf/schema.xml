@@ -4,7 +4,7 @@
  <field name="_version_" type="long" indexed="true" stored="true"/>
  <field name="_root_" type="string" indexed="true" stored="false"/>
 
- <field name="id" type="long" indexed="true" stored="true" required="true" multiValued="false"/> 
+ <field name="id" type="string" indexed="true" stored="true" required="true" multiValued="false"/> 
 
  <field name="text_de" type="text_de" indexed="true" stored="true"/>
  <field name="text_en" type="text_en" indexed="true" stored="true"/>
@@ -58,4 +58,6 @@
       <!-- less aggressive: <filter class="solr.RussianLightStemFilterFactory"/> -->
     </analyzer>
   </fieldType>
+  
+  <similarity class="org.apache.lucene.search.similarities.DefaultSimilarity"/>
 </schema>
