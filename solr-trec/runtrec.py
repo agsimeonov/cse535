@@ -25,5 +25,7 @@ for f in files:
     call([argv[1], '-q', '-c', '-M', '3440', '-m', 'map', argv[3], f], stdout=outfile)
   with open(outpath+"-ndcg.txt", 'w') as outfile:
     call([argv[1], '-q', '-c', '-M', '3440', '-m', 'ndcg',  argv[3], f], stdout=outfile)
+  with open(outpath+"-bpref.txt", 'w') as outfile:
+    call([argv[1], '-q', '-c', '-M', '3440', '-m', 'bpref',  argv[3], f], stdout=outfile)
   with open(outpath+"-f05.txt", 'w') as outfile:
     call([argv[1], '-q', '-c', '-M', '3440', '-m', 'set_F.0.5',  argv[3], f], stdout=outfile)
