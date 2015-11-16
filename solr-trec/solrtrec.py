@@ -8,7 +8,7 @@ from urllib2 import urlopen
 # Make sure we have the correct command line arguments
 if len(argv) < 4:
   print "Please provide command line arguments as follows:"
-  print "python solrtrec.py <Formatted Query File> <Output File> <Model> (Boost)"
+  print "python solrtrec.py <Formatted Query File> (!) <Output File> <Model> (Boost)"
   exit(0)
 
 urls = [] # (id, url) format
@@ -22,6 +22,20 @@ if (len(argv) > 4):
   top = 21
 else:
   top = 2
+  
+if argv[2] == '!':
+  for url in urls:
+    output = open(argv[3] + '/' + str(int(url[0])) + '.txt', 'w')
+    data = urlopen(url[1])
+    docs = json.load(data)['response']['docs']
+    
+    rank = 0
+    for doc in docs:
+      output.write(url[0] + ' ' + 'Q0' + ' ' + str(doc['id']) + ' ' + str(rank) + ' ' + str(doc['score']) + ' ' + argv[4] + '\n')
+      rank += 1
+      
+    output.close()
+  exit(0)
   
 for x in range(1, top):
   boost = .1 * x
@@ -39,7 +53,7 @@ for x in range(1, top):
       data = urlopen(url[1])
     docs = json.load(data)['response']['docs']
   
-    rank = 1
+    rank = 0
     for doc in docs:
       output.write(url[0] + ' ' + 'Q0' + ' ' + str(doc['id']) + ' ' + str(rank) + ' ' + str(doc['score']) + ' ' + argv[3] + '\n')
       rank += 1
