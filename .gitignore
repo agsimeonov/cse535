@@ -2,7 +2,6 @@
 data/partb_data/
 solr-5.3.0.tgz
 solr-5.3.0/
-solr-trec/out/
 solr-trec/trec_eval_latest.tar.gz
 solr-trec/trec_eval.9.0/
 
