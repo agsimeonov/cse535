@@ -798,11 +798,9 @@
          will be overridden by parameters in the request
       -->
      <lst name="defaults">
-       <str name="defType">dismax</str>
-       <str name="qf">text_en text_de text_ru tweet_hashtags^0.5</str>
+       <str name="defType">agsimeon</str>
        <str name="echoParams">explicit</str>
        <int name="rows">10</int>
-       <str name="df">text</str>
      </lst>
     <!-- In addition to defaults, "appends" params can be specified
          to identify values which should be appended to the list of
@@ -1560,7 +1558,7 @@
   <!--
      <queryParser name="myparser" class="com.mycompany.MyQParserPlugin"/>
     -->
-  <!-- <queryParser name="agsimeon" class="edu.buffalo.cse535.AgsimeonQParserPlugin"/> -->
+  <queryParser name="agsimeon" class="edu.buffalo.cse535.AgsimeonQParserPlugin"/>
 
   <!-- Function Parsers
 
