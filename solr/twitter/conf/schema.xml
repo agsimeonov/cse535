@@ -104,12 +104,12 @@
     </analyzer>
   </fieldType>
   
-  <!-- <similarity class="org.apache.lucene.search.similarities.DefaultSimilarity"/> -->
+  <similarity class="org.apache.lucene.search.similarities.DefaultSimilarity"/>
   <!-- <similarity class="org.apache.solr.search.similarities.BM25SimilarityFactory">
-      <float name="k1">0.9</float>
+      <float name="k1">0.5</float>
       <float name="b">0.6</float>
   </similarity> -->
-  <similarity class="org.apache.solr.search.similarities.LMJelinekMercerSimilarityFactory">
-    <float name="lambda">.9</float>
-  </similarity>
+  <!-- <similarity class="org.apache.solr.search.similarities.LMJelinekMercerSimilarityFactory">
+    <float name="lambda">0.3</float>
+  </similarity> -->
 </schema>
